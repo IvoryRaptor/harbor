@@ -165,7 +165,7 @@ def sync_filters(paths):
 if __name__ == '__main__':
     anglers = helper.load_yaml_file('./harbor.yaml')['anglers']
     sync_log_config(anglers)
-    sync_angler_config(anglers)
+    sync_angler_config(anglers, True)
     sync_other_config(anglers)
     sync_resources(anglers)
     sync_services(anglers)
