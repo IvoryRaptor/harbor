@@ -3,9 +3,8 @@ import os
 import configparser
 import re
 import shutil
-
 import yaml
-from angler.helper import load_yaml_file
+from angler import helper
 
 logger = logging.getLogger('harbor')
 logging.config.fileConfig("./logging.conf")
@@ -74,7 +73,7 @@ def sync_angler_config(paths):
         result = {}
         for path in paths:
             config_path = '{0}/config/angler/config.yaml'.format(path)
-            conf = load_yaml_file(config_path)
+            conf = helper.load_yaml_file(config_path)
             dict_merge(result, conf)
 
         with open('./config/angler/config.yaml', 'w') as outfile:
@@ -107,13 +106,51 @@ def sync_resources(paths):
 
 def sync_services(paths):
     create_path('./services')
+    imports = {}
+    froms = {}
+    voluations = {}
+    codes = {}
+
     for path in paths:
         filters_path = '{0}/services/'.format(path)
         if os.path.exists(filters_path):
             for py_file in os.listdir(filters_path):
-
-                if re.match('^[a-z|_]+.py$', py_file) and py_file != '__init__.py':
+                if py_file == '__init__.py':
+                    lines = helper.load_strings_file(filters_path + '__init__.py')
+                    for line in lines:
+                        data = re.search('from (.+) import (.+)', line)
+                        if data is not None:
+                            l = froms.get(data.group(1))
+                            if l is None:
+                                l = {}
+                                froms[data.group(1)] = l
+                            for item in data.group(2).split(','):
+                                if l.get(item) is None:
+                                    l[item] = ''
+                            continue
+                        data = re.search('import (.+)', line)
+                        if data is not None:
+                            imports[data.group(1)] = ''
+                            continue
+                        data = re.search('(.+) = (.+)', line)
+                        if data is not None:
+                            voluations[data.group(1)] = data.group(2)
+                            continue
+                        codes[line] = ''
+                elif re.match('^[a-z|_]+.py$', py_file):
                     copy_file(filters_path + py_file, 'services/' + py_file, True)
+    file = open('./services/__init__.py', 'w', encoding='utf8')
+    for item in imports.keys():
+        file.write('import {0}\n'.format(item))
+    for item in froms.keys():
+        file.write('from {0} import {1}\n'.format(item, ','.join(froms[item].keys())))
+    file.write('\n\n')
+    for item in voluations.keys():
+        file.write('{0} = {1}\n'.format(item, voluations[item]))
+    for item in codes.keys():
+        file.write('{0}\n'.format(item))
+    file.close()
+    logger.info('create services/__init__.py')
 
 
 def sync_filters(paths):
@@ -124,7 +161,6 @@ def sync_filters(paths):
             for py_file in os.listdir(filters_path):
                 if re.match('^[a-z|_]+.py$', py_file) and py_file != '__init__.py':
                     copy_file(filters_path + py_file, 'filters/' + py_file, True)
-
 
 # def sync_angler(paths):
 #     for path in paths:
@@ -156,8 +192,9 @@ def sync_filters(paths):
 #                     if re.match('^[a-z|_]+.py$', py_file) and py_file != '__init__.py':
 #                         shutil.copyfile(filters_path + py_file, 'filters/' + py_file)
 
+
 if __name__ == '__main__':
-    anglers = load_yaml_file('./harbor.yaml')['anglers']
+    anglers = helper.load_yaml_file('./harbor.yaml')['anglers']
     sync_log_config(anglers)
     sync_angler_config(anglers)
     sync_other_config(anglers)
