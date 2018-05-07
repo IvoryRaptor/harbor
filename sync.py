@@ -162,36 +162,6 @@ def sync_filters(paths):
                 if re.match('^[a-z|_]+.py$', py_file) and py_file != '__init__.py':
                     copy_file(filters_path + py_file, 'filters/' + py_file, True)
 
-# def sync_angler(paths):
-#     for path in paths:
-#         angler_name = path[path.rfind('/')+1:]
-#         if re.match('^[a-z|_]+$', angler_name):
-#             project_resources_path = 'resources/{0}/'.format(angler_name)
-#             if not os.path.exists(project_resources_path):
-#                 os.mkdir(project_resources_path)
-#             resources_path = '{0}/resources/'.format(path)
-#             for py_file in os.listdir(resources_path):
-#                 if re.match('^[a-z|_]+.py$', py_file):
-#                     shutil.copyfile(resources_path + py_file, project_resources_path + py_file)
-#
-#             services_path = '{0}/services/'.format(path)
-#             if os.path.exists(services_path):
-#                 for py_file in os.listdir(services_path):
-#                     if re.match('^[a-z|_]+.py$', py_file) and py_file != '__init__.py':
-#                         shutil.copyfile(services_path + py_file, 'services/' + py_file)
-#
-#             filters_path = '{0}/filters/'.format(path)
-#             if os.path.exists(filters_path):
-#                 for py_file in os.listdir(filters_path):
-#                     if re.match('^[a-z|_]+.py$', py_file) and py_file != '__init__.py':
-#                         shutil.copyfile(filters_path + py_file, 'filters/' + py_file)
-#
-#             filters_path = '{0}/config/'.format(path)
-#             if os.path.exists(filters_path):
-#                 for py_file in os.listdir(filters_path):
-#                     if re.match('^[a-z|_]+.py$', py_file) and py_file != '__init__.py':
-#                         shutil.copyfile(filters_path + py_file, 'filters/' + py_file)
-
 
 if __name__ == '__main__':
     anglers = helper.load_yaml_file('./harbor.yaml')['anglers']
@@ -201,44 +171,3 @@ if __name__ == '__main__':
     sync_resources(anglers)
     sync_services(anglers)
     sync_filters(anglers)
-
-    #
-    #
-    # for angler in conf['anglers']:
-    #     conf_file = angler + '/config/log/logging.conf'
-    #     if os.path.exists(conf_file):
-    #         config = configparser.ConfigParser()
-    #         config.read(conf_file)
-    # #
-    # log_conf.write('./config/log/logging.conf')
-
-    # print(config['loggers']['keys'])
-    # print(config.sections())
-    # logging.config.fileConfig("./config/log/logging.conf")  # 采用配置文件
-    #
-    # # create logger
-    # logger = logging.getLogger('angler')
-    #
-    # # "application" code
-    # logger.debug("debug message")
-    # logger.info("info message")
-    # logger.warn("warn message")
-    # logger.error("error message")
-    # logger.critical("critical message")
-    #
-    # log2 = logging.getLogger('angler.mongo')
-    # log2.info('info')
-
-    # logger.setLevel(logging.INFO)
-    # logger.addHandler(logging.StreamHandler(sys.stdout))
-
-    # logger.setLevel(logging.DEBUG)
-    # logging.info('123456')
-    # paths = ['./config', './resources', './services']
-
-    # for path in paths:
-    #     logger.info('clear {0}'.format(path))
-    #     shutil.rmtree(path)
-    #     os.mkdir(path)
-
-
