@@ -67,8 +67,8 @@ def dict_merge(obj, plus):
             obj[key] = plus[key]
 
 
-def sync_angler_config(paths):
-    if not os.path.exists('./config/angler/config.yaml'):
+def sync_angler_config(paths, override=False):
+    if not os.path.exists('./config/angler/config.yaml') or override:
         create_path('./config/angler')
         result = {}
         for path in paths:
@@ -78,7 +78,6 @@ def sync_angler_config(paths):
 
         with open('./config/angler/config.yaml', 'w') as outfile:
             text = yaml.dump(result, default_flow_style=False)
-            print(text)
             outfile.write(text)
 
 
