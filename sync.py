@@ -79,6 +79,7 @@ def sync_angler_config(paths, override=False):
         with open('./config/angler/config.yaml', 'w') as outfile:
             text = yaml.dump(result, default_flow_style=False)
             outfile.write(text)
+            logger.info('create file %s', './config/angler/config.yaml')
 
 
 def sync_other_config(paths):

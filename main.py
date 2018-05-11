@@ -14,7 +14,6 @@ def set_config(filename, project, matrix, angler_name):
     config['source']['query'] = '{0}_{1}'.format(matrix, angler_name)
     config['source']['group'] = angler_name
 
-    config['services']['registry']['url'] = load_file('./registry/registry').replace('\n', '')
     file = open(filename, 'w', encoding='utf8')
     text = yaml.dump(config, default_flow_style=False)
     file.write(text)
