@@ -100,7 +100,7 @@ def sync_resources(paths):
             create_path(project_resources_path)
             resources_path = '{0}/resources/'.format(path)
             for py_file in os.listdir(resources_path):
-                if re.match('^[a-z|_]+.py$', py_file):
+                if re.match('^[a-z|_]+.py$', py_file) and py_file != '__init__.py':
                     copy_file(resources_path + py_file, project_resources_path + py_file, True)
 
 
